@@ -4,22 +4,15 @@ import com.example.product_service.config.EmbeddedMongoConfig;
 import com.example.product_service.dto.ProductRequest;
 import com.example.product_service.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.Mongod;
-import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
-import de.flapdoodle.reverse.TransitionWalker;
-import org.junit.jupiter.api.AfterAll;
+import com.mongodb.assertions.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -58,6 +51,8 @@ class ProductServiceApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(productRequestString))
 			.andExpect(status().isCreated());
+
+		Assertions.assertTrue(productRepository.findAll().size() == 1);
 	}
 
 	private ProductRequest getProductRequest() {
