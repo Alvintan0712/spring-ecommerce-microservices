@@ -6,16 +6,16 @@ services:
     volumes:
       - product-db-volume:/data/db
 
-  order-db:
+  postgres-db:
     image: postgres:latest
     ports:
       - "5432:5432"
     volumes:
-      - order-db-volume:/var/lib/postgresql/data
+      - postgres-db-volume:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: sample_password
       POSTGRES_DB: order-db
 
 volumes:
   product-db-volume:
-  order-db-volume:
+  postgres-db-volume:
