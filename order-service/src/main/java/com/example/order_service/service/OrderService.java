@@ -50,6 +50,8 @@ public class OrderService {
                     .map(orderLineItem -> {
                         OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
                         orderLineItemDto.setId(orderLineItem.getId());
+                        orderLineItemDto.setSkuCode(orderLineItem.getSkuCode());
+                        orderLineItemDto.setPrice(orderLineItem.getPrice());
                         orderLineItemDto.setQuantity(orderLineItem.getQuantity());
                         return orderLineItemDto;
                     }).toList());
