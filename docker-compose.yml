@@ -1,10 +1,21 @@
 services:
-  mongodb:
+  product-db:
     image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
-      - mongodb-volume:/data/db
+      - product-db-volume:/data/db
+
+  order-db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-db-volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: sample_password
+      POSTGRES_DB: order-db
 
 volumes:
-  mongodb-volume:
+  product-db-volume:
+  order-db-volume:
