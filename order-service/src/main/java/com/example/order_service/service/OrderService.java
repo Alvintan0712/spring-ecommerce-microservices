@@ -1,23 +1,26 @@
 package com.example.order_service.service;
 
+import com.example.order_service.dto.InventoryResponse;
 import com.example.order_service.dto.OrderLineItemDto;
 import com.example.order_service.dto.OrderRequest;
 import com.example.order_service.dto.OrderResponse;
 import com.example.order_service.model.Order;
 import com.example.order_service.model.OrderLineItem;
 import com.example.order_service.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final RestClient restClient;
 
     public void placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
@@ -32,6 +35,24 @@ public class OrderService {
         }
 
         order.setOrderLineItems(orderLineItems);
+
+        List<String> skuCodes = order.getOrderLineItems()
+                .stream()
+                .map(OrderLineItem::getSkuCode)
+                .toList();
+
+        InventoryResponse[] inventoryResponses = restClient.get()
+                .uri("http://localhost:8082/v1/inventory",
+                        uriBuilder -> uriBuilder.queryParam("skuCodes", skuCodes).build())
+                .retrieve()
+                .body(InventoryResponse[].class);
+
+        boolean allProductsInStock = Arrays.stream(Objects.requireNonNull(inventoryResponses))
+                .allMatch(InventoryResponse::isInStock);
+
+        if (!allProductsInStock) {
+            throw new IllegalArgumentException("Product is not in stock, please try again later.");
+        }
 
         orderRepository.save(order);
     }
