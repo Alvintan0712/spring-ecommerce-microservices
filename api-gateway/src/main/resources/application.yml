@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+      - id: product-service
+        uri: http://product-service
+        predicates:
+        - Path=/v1/product
+      - id: order-service
+        uri: http://order-service
+        predicates:
+        - Path=/v1/order
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        cloud:
+          gateway: INFO
+          gateway.route.RouteDefinitionLocator: INFO
