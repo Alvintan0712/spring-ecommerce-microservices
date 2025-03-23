@@ -9,6 +9,7 @@ import com.example.order_service.model.OrderLineItem;
 import com.example.order_service.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -18,6 +19,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional
 public class OrderService {
+
+    @Value("${inventory.service.url}")
+    private String inventoryServiceUrl;
 
     private final OrderRepository orderRepository;
     private final RestClient restClient;
@@ -42,7 +46,7 @@ public class OrderService {
                 .toList();
 
         InventoryResponse[] inventoryResponses = restClient.get()
-                .uri("http://localhost:8082/v1/inventory",
+                .uri(String.format("%s/v1/inventory", inventoryServiceUrl),
                         uriBuilder -> uriBuilder.queryParam("skuCodes", skuCodes).build())
                 .retrieve()
                 .body(InventoryResponse[].class);
