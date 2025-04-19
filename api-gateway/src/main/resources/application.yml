@@ -12,6 +12,11 @@ spring:
         uri: http://order-service
         predicates:
         - Path=/v1/order
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8181/realms/spring-boot-microservices
 
 logging:
   level:
